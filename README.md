@@ -22,7 +22,7 @@ The N-Queens Solver is a Java application that aims to find solutions to the N-Q
 - **NQueensThread.java**: Represents a thread for solving the problem concurrently.
 - **NQueensSolverGUI.java**: Provides a graphical user interface for interacting with the solver.
 - **Main.java**: The main entry point for running the application.
-- **pom.xml**: configuration for managing dependencies.
+- **pom.xml**: Maven configuration for managing dependencies.
 
 ## 3. Project Structure <a name="project-structure"></a>
 The project follows a modular structure:
@@ -37,8 +37,10 @@ The project follows a modular structure:
 
 
 ## 4. How to Run <a name="how-to-run"></a>
-1. Ensure you have Java installed.
+1. Ensure you have Java and Maven installed.
 2. Clone the repository: `git clone <repository-url>`
+3. Navigate to the project directory: `cd Multithreaded-N-Queens-Problem-Solver`
+4. Build the project: `mvn clean install`
 
 ## 5. Algorithm Details <a name="algorithm-details"></a>
 The algorithm uses a backtracking approach to explore all possible combinations of queen placements. The time complexity is \(O(N!)\), and the space complexity is \(O(N)\).
@@ -51,6 +53,7 @@ The GUI, implemented using Java Swing, allows users to input the size of the che
 
 ## 8. Dependencies <a name="dependencies"></a>
 - Java Swing for GUI components.
+- Maven for project management.
 
 ## 9. Performance Considerations <a name="performance-considerations"></a>
 The actual runtime may vary based on the hardware and environment. Consider adjusting thread count and other parameters for optimal performance.
