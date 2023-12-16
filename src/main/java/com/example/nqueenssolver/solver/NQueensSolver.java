@@ -8,10 +8,10 @@ public class NQueensSolver {
     private int n; // size of the chessboard
     private Random random; // Random instance for each solver
 
-    public NQueensSolver(int n) {
+    public NQueensSolver(int n, Random random) {
         this.n = n;
         this.queens = new int[n];
-        this.random = new Random();
+        this.random = random;
 
         // Initialize the queens array to -1, indicating that no queens are placed initially
         for (int i = 0; i < n; i++) {
@@ -94,5 +94,15 @@ public class NQueensSolver {
             }
         }
         return chessboard;
+    }
+
+    // New method to place a queen at a specific row and column
+    public void placeQueen(int row, int col) {
+        queens[row] = col;
+    }
+
+    // New method to remove a queen from a specific row
+    public void removeQueen(int row) {
+        queens[row] = -1;
     }
 }
