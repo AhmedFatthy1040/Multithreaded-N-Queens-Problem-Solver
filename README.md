@@ -17,6 +17,9 @@
 ## 1. Introduction <a name="introduction"></a>
 The N-Queens Solver is a Java application that aims to find solutions to the N-Queens problem. The N-Queens problem involves placing N queens on an N×N chessboard in such a way that no two queens threaten each other. The project utilizes a multithreaded approach for solving the problem and includes a graphical user interface (GUI) to visualize the solutions.
 
+![queens](https://github.com/AhmedFatthy1040/Multithreaded-N-Queens-Problem-Solver/assets/91102592/0788a467-1379-4a9f-968e-2a82bd5db3a7)
+
+
 ## 2. Project Overview <a name="project-overview"></a>
 - **NQueensSolver.java**: Implements the core logic for solving the N-Queens problem.
 - **NQueensThread.java**: Represents a thread for solving the problem concurrently.
