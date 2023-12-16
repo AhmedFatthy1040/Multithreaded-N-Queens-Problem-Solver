@@ -13,6 +13,7 @@
 10. [Future Improvements](#future-improvements)
 11. [Contributing](#contributing)
 12. [License](#license)
+13. [Video in Arabic to Explain The Project](#video)
 
 ## 1. Introduction <a name="introduction"></a>
 The N-Queens Solver is a Java application that aims to find solutions to the N-Queens problem. The N-Queens problem involves placing N queens on an N×N chessboard in such a way that no two queens threaten each other. The project utilizes a multithreaded approach for solving the problem and includes a graphical user interface (GUI) to visualize the solutions.
@@ -71,4 +72,5 @@ Contributions are welcome! Feel free to fork the project and submit pull request
 ## 12. License <a name="license"></a>
 This project is licensed under the [MIT License](LICENSE).
 
+## 13. Video in Arabic to Explain The Project <a name="video"></a>
 
