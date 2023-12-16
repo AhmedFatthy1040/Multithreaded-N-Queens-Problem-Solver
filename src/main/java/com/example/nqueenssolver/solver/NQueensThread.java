@@ -4,22 +4,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
 
-public class NQueensThread extends SwingWorker<Void, int[]> {
+public class NQueensThread extends Thread {
     private final int threadNumber;
     private final int n;
     private final Random random;
     private final ChessboardPanel chessboardPanel; // Added ChessboardPanel instance
     private final NQueensSolver solver;
+    private volatile boolean solutionFound = false;
 
-    public NQueensThread(int threadNumber, int n, Random random, ChessboardPanel chessboardPanel) {
+    public NQueensThread(int threadNumber, int n, Random random, NQueensThread.ChessboardPanel chessboardPanel) {
         this.threadNumber = threadNumber;
         this.n = n;
-        this.random = random;
+        this.random = new Random(); // Create a new Random instance for each thread
         this.chessboardPanel = chessboardPanel;
         this.solver = new NQueensSolver(n, random);
     }
+
     @Override
-    protected Void doInBackground() {
+    public void run() {
         System.out.println("Thread " + threadNumber + " started.");
 
         // Solve N-Queens problem for this thread
@@ -27,10 +29,18 @@ public class NQueensThread extends SwingWorker<Void, int[]> {
 
         System.out.println("Thread " + threadNumber + " finished.");
 
-        // Display a message indicating the thread has finished
-        showMessage("Thread " + threadNumber + " has finished its task.");
-
-        return null;
+        if (isSolutionFound()) {
+            // Display a message indicating the thread has found a solution
+            showMessage("Thread " + threadNumber + " found a solution!");
+            
+            // Resume the thread after displaying the message
+            synchronized (this) {
+                notify();
+            }
+        } else {
+            // Display a message indicating the thread has finished without finding a solution
+            showMessage("Thread " + threadNumber + " has finished its task.");
+        }
     }
 
     private void showMessage(String message) {
@@ -47,9 +57,21 @@ public class NQueensThread extends SwingWorker<Void, int[]> {
         }
     }
 
+    public boolean isSolutionFound() {
+        return solutionFound;
+    }
+
     private void solveNQueensWithVisualization(int row) throws InterruptedException {
         if (row == n) {
             // All queens are placed successfully
+            solutionFound = true; // Set the flag to true when a solution is found
+            showMessage("Thread " + threadNumber + " found a solution!");
+            
+            // Pause the thread here to keep the solution displayed
+            synchronized (this) {
+                wait();
+            }
+    
             return;
         }
 
@@ -62,22 +84,16 @@ public class NQueensThread extends SwingWorker<Void, int[]> {
                 solver.placeQueen(row, col);
 
                 // Publish intermediate state to update UI
-                publish(solver.getQueens().clone());
+                updateChessboardDisplay(solver.getQueens().clone());
+                Thread.sleep(500);  // Adjust sleep duration for visualization speed
 
                 // Recur to place queens in the remaining rows
                 solveNQueensWithVisualization(row + 1);
 
                 // If placing queen in the current cell doesn't lead to a solution, backtrack
                 solver.removeQueen(row);
-                Thread.sleep(500);  // Adjust sleep duration for visualization speed
             }
         }
-    }
-
-    @Override
-    protected void process(java.util.List<int[]> chunks) {
-        int[] latestQueens = chunks.get(chunks.size() - 1);
-        updateChessboardDisplay(latestQueens);
     }
 
     private void updateChessboardDisplay(int[] queens) {
