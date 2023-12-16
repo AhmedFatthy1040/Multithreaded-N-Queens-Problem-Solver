@@ -11,6 +11,7 @@ public class NQueensThread extends Thread {
     private final ChessboardPanel chessboardPanel; // Added ChessboardPanel instance
     private final NQueensSolver solver;
     private volatile boolean solutionFound = false;
+    private final Object lock = new Object(); // Add a lock object for synchronization
 
     public NQueensThread(int threadNumber, int n, Random random, NQueensThread.ChessboardPanel chessboardPanel) {
         this.threadNumber = threadNumber;
@@ -29,17 +30,17 @@ public class NQueensThread extends Thread {
 
         System.out.println("Thread " + threadNumber + " finished.");
 
-        if (isSolutionFound()) {
-            // Display a message indicating the thread has found a solution
-            showMessage("Thread " + threadNumber + " found a solution!");
-            
-            // Resume the thread after displaying the message
-            synchronized (this) {
-                notify();
+        synchronized (lock) {
+            if (isSolutionFound()) {
+                // Display a message indicating the thread has found a solution
+                showMessage("Thread " + threadNumber + " found a solution!");
+
+                // Resume the thread after displaying the message
+                lock.notify();
+            } else {
+                // Display a message indicating the thread has finished without finding a solution
+                showMessage("Thread " + threadNumber + " has finished its task.");
             }
-        } else {
-            // Display a message indicating the thread has finished without finding a solution
-            showMessage("Thread " + threadNumber + " has finished its task.");
         }
     }
 
@@ -64,37 +65,35 @@ public class NQueensThread extends Thread {
     private void solveNQueensWithVisualization(int row) throws InterruptedException {
         if (row == n) {
             // All queens are placed successfully
-            solutionFound = true; // Set the flag to true when a solution is found
-            showMessage("Thread " + threadNumber + " found a solution!");
-            
-            // Pause the thread here to keep the solution displayed
-            synchronized (this) {
-                wait();
+            synchronized (lock) {
+                solutionFound = true; // Set the flag to true when a solution is found
+                showMessage("Thread " + threadNumber + " found a solution!");
+                // Pause the thread here to keep the solution displayed
+                lock.wait();
             }
-    
             return;
         }
-
+    
         int[] shuffledColumns = getShuffledColumns();
-
+    
         for (int i = 0; i < n; i++) {
             int col = shuffledColumns[i];
             if (isSafe(row, col)) {
                 // Place the queen in this cell
                 solver.placeQueen(row, col);
-
+    
                 // Publish intermediate state to update UI
                 updateChessboardDisplay(solver.getQueens().clone());
-                Thread.sleep(500);  // Adjust sleep duration for visualization speed
-
+                Thread.sleep(500); // Adjust sleep duration for visualization speed
+    
                 // Recur to place queens in the remaining rows
                 solveNQueensWithVisualization(row + 1);
-
+    
                 // If placing queen in the current cell doesn't lead to a solution, backtrack
                 solver.removeQueen(row);
             }
         }
-    }
+    }    
 
     private void updateChessboardDisplay(int[] queens) {
         SwingUtilities.invokeLater(() -> {
