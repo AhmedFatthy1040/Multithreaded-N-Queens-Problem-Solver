@@ -63,7 +63,7 @@ public class NQueensSolverGUI extends JFrame {
             // Create a new thread for each solver with the Random instance and ChessboardPanel instance
             NQueensThread.ChessboardPanel chessboardPanel = new NQueensThread.ChessboardPanel(new int[n]);
             NQueensThread thread = new NQueensThread(i, n, random, chessboardPanel);
-            thread.execute(); // Use execute() instead of start() for SwingWorker
+            thread.start(); // Use execute() instead of start() for SwingWorker
 
             // Add the ChessboardPanel to the GUI with horizontal offset and thread number in the title
             addChessboardPanelToGUI(chessboardPanel, i);
