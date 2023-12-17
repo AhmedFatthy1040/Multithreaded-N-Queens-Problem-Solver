@@ -73,4 +73,4 @@ Contributions are welcome! Feel free to fork the project and submit pull request
 This project is licensed under the [MIT License](LICENSE).
 
 ## 13. Video in Arabic to Explain The Project <a name="video"></a>
-
+![video](D:\Programming Projects\Multithreaded-N-Queens-Problem-Solver\resources\NQueensProject.mp4)
