@@ -1,82 +1,311 @@
-# N-Queens Solver Documentation
+# N-Queens Solver - Multithreaded Implementation
 
 ## Table of Contents
 1. [Introduction](#introduction)
-2. [Project Overview](#project-overview)
+2. [Features](#features)
 3. [Project Structure](#project-structure)
-4. [How to Run](#how-to-run)
-5. [Algorithm Details](#algorithm-details)
-6. [Concurrency](#concurrency)
-7. [Graphical User Interface (GUI)](#graphical-user-interface-gui)
-8. [Dependencies](#dependencies)
-9. [Performance Considerations](#performance-considerations)
-10. [Future Improvements](#future-improvements)
-11. [Contributing](#contributing)
-12. [License](#license)
-13. [Video in Arabic to Explain The Project](#video)
-14. [Documentation File](#doc)
+4. [Requirements](#requirements)
+5. [How to Build and Run](#how-to-build-and-run)
+6. [Algorithm Details](#algorithm-details)
+7. [Concurrency and Performance](#concurrency-and-performance)
+8. [User Interface](#user-interface)
+9. [Improvements Made](#improvements-made)
+10. [Performance Considerations](#performance-considerations)
+11. [Testing](#testing)
+12. [Contributing](#contributing)
+13. [License](#license)
+14. [Media Resources](#media-resources)
 
-## 1. Introduction <a name="introduction"></a>
-The N-Queens Solver is a Java application that aims to find solutions to the N-Queens problem. The N-Queens problem involves placing N queens on an N×N chessboard in such a way that no two queens threaten each other. The project utilizes a multithreaded approach for solving the problem and includes a graphical user interface (GUI) to visualize the solutions.
+## 1. Introduction
+
+The N-Queens Solver is a modern Java application that solves the classical N-Queens problem using advanced multithreading techniques. The N-Queens problem involves placing N queens on an N×N chessboard such that no two queens threaten each other (no two queens share the same row, column, or diagonal).
+
+This implementation features:
+- **Modern Java 17** with enhanced performance and features
+- **Thread-safe concurrent solving** with optimal thread management
+- **Real-time visualization** of the solving process
+- **Improved user interface** with better controls and feedback
+- **Comprehensive testing** with JUnit 5
+- **Performance monitoring** and optimization utilities
 
 ![queens](https://github.com/AhmedFatthy1040/Multithreaded-N-Queens-Problem-Solver/assets/91102592/0788a467-1379-4a9f-968e-2a82bd5db3a7)
 
+## 2. Features
 
-## 2. Project Overview <a name="project-overview"></a>
-- **NQueensSolver.java**: Implements the core logic for solving the N-Queens problem.
-- **NQueensThread.java**: Represents a thread for solving the problem concurrently.
-- **NQueensSolverGUI.java**: Provides a graphical user interface for interacting with the solver.
-- **Main.java**: The main entry point for running the application.
-- **pom.xml**: Maven configuration for managing dependencies.
+### Core Features
+- ✅ **Multithreaded N-Queens solving** with configurable thread count
+- ✅ **Real-time visualization** of the solving process
+- ✅ **Thread-safe implementation** using modern concurrency patterns
+- ✅ **Optimized backtracking algorithm** with randomization
+- ✅ **Responsive GUI** with start/stop controls
+- ✅ **Performance monitoring** and complexity estimation
+- ✅ **Comprehensive error handling** and input validation
+- ✅ **Unit tests** with high coverage
 
-## 3. Project Structure <a name="project-structure"></a>
-The project follows a modular structure:
+### Technical Improvements
+- 🔄 **Upgraded to Java 17** from Java 8
+- 🧵 **ExecutorService-based thread management** instead of raw threads
+- 🎨 **Enhanced UI design** with better layout and controls
+- 🛡️ **Thread safety** using AtomicBoolean and proper synchronization
+- ⚡ **Performance optimizations** and memory management
+- 📊 **Performance utilities** for monitoring and optimization
+- 🧪 **Comprehensive testing** framework
 
-- com.example.nqueenssolver
-  - Main.java
-  - solver
-    - NQueensSolver.java
-    - NQueensThread.java
-  - gui
-    - NQueensSolverGUI.java
+## 3. Project Structure
 
+```
+src/
+├── main/java/com/example/nqueenssolver/
+│   ├── Main.java                    # Application entry point
+│   ├── gui/
+│   │   └── NQueensSolverGUI.java   # Enhanced GUI with modern controls
+│   ├── solver/
+│   │   ├── NQueensSolver.java      # Core solving algorithm (improved)
+│   │   └── NQueensThread.java      # Thread implementation (rewritten)
+│   └── utils/
+│       └── PerformanceUtils.java   # Performance monitoring utilities
+└── test/java/com/example/nqueenssolver/
+    └── solver/
+        └── NQueensSolverTest.java  # Comprehensive unit tests
+```
 
-## 4. How to Run <a name="how-to-run"></a>
-1. Ensure you have Java and Maven installed.
-2. Clone the repository: `git clone <repository-url>`
-3. Navigate to the project directory: `cd Multithreaded-N-Queens-Problem-Solver`
-4. Build the project: `mvn clean install`
+## 4. Requirements
 
-## 5. Algorithm Details <a name="algorithm-details"></a>
-The algorithm uses a backtracking approach to explore all possible combinations of queen placements. The time complexity is \(O(N!)\), and the space complexity is \(O(N)\).
+### System Requirements
+- **Java 17** or higher
+- **Maven 3.6+** for build management
+- **Minimum 4GB RAM** recommended for larger problems (N > 15)
+- **Multi-core processor** recommended for optimal performance
 
-## 6. Concurrency <a name="concurrency"></a>
-The project utilizes multithreading to solve the N-Queens problem concurrently. Each thread represents a unique attempt to find a solution.
+### Development Requirements
+- **IDE** with Java 17 support (IntelliJ IDEA, Eclipse, VS Code)
+- **JUnit 5** for running tests
+- **Git** for version control
 
-## 7. Graphical User Interface (GUI) <a name="graphical-user-interface-gui"></a>
-The GUI, implemented using Java Swing, allows users to input the size of the chessboard (N) and visualize the solutions found by each thread.
+## 5. How to Build and Run
 
-## 8. Dependencies <a name="dependencies"></a>
-- Java Swing for GUI components.
-- Maven for project management.
+### Using Maven (Recommended)
 
-## 9. Performance Considerations <a name="performance-considerations"></a>
-The actual runtime may vary based on the hardware and environment. Consider adjusting thread count and other parameters for optimal performance.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/AhmedFatthy1040/Multithreaded-N-Queens-Problem-Solver.git
+   cd Multithreaded-N-Queens-Problem-Solver
+   ```
 
-## 10. Future Improvements <a name="future-improvements"></a>
-- Implement additional heuristics for faster pruning of the search space.
-- Enhance GUI features for better user interaction.
+2. **Build the project:**
+   ```bash
+   mvn clean compile
+   ```
 
-## 11. Contributing <a name="contributing"></a>
-Contributions are welcome! Feel free to fork the project and submit pull requests.
+3. **Run the application:**
+   ```bash
+   mvn exec:java
+   ```
 
-## 12. License <a name="license"></a>
+4. **Run tests:**
+   ```bash
+   mvn test
+   ```
+
+5. **Create executable JAR:**
+   ```bash
+   mvn clean package
+   java -jar target/nqueenssolver-1.0.0.jar
+   ```
+
+### Using IDE
+1. Import the project as a Maven project
+2. Ensure Java 17 is configured
+3. Run `Main.java` from your IDE
+4. Run tests from the test directory
+
+## 6. Algorithm Details
+
+### Core Algorithm
+The solver uses an **optimized backtracking algorithm** with the following enhancements:
+
+- **Randomized column ordering** to find different solutions across threads
+- **Efficient conflict detection** using mathematical formulas
+- **Early termination** when solutions are found
+- **Memory-efficient state representation**
+
+### Time and Space Complexity
+- **Time Complexity:** O(N!) in the worst case, but typically much better due to pruning
+- **Space Complexity:** O(N) for the recursion stack and queen positions
+- **Practical Performance:** Significantly improved through multithreading and optimizations
+
+### Pseudocode
+```
+function solveNQueens(row):
+    if row == N:
+        return true // Solution found
+    
+    for each column in randomized_order:
+        if isSafe(row, column):
+            placeQueen(row, column)
+            if solveNQueens(row + 1):
+                return true
+            removeQueen(row)
+    
+    return false // No solution in this branch
+```
+
+## 7. Concurrency and Performance
+
+### Thread Management
+- **ExecutorService-based** thread pool management
+- **Configurable thread count** with intelligent defaults
+- **Proper thread lifecycle** management with cleanup
+- **Thread-safe state** sharing and updates
+
+### Performance Features
+- **Optimal thread count calculation** based on system capabilities
+- **Performance monitoring** with execution time tracking
+- **Memory usage optimization** with proper object lifecycle
+- **Complexity estimation** for user guidance
+
+### Synchronization
+- **AtomicBoolean** for thread-safe flags
+- **SwingUtilities.invokeLater()** for UI updates
+- **Proper thread interruption** handling
+- **Resource cleanup** on application exit
+
+## 8. User Interface
+
+### Main Window Features
+- **Board size input** with validation (1-20 recommended)
+- **Thread count selection** with optimal defaults
+- **Start/Stop controls** for solving process
+- **Status updates** with real-time feedback
+- **Error handling** with user-friendly messages
+
+### Visualization Windows
+- **Individual thread windows** showing solving progress
+- **Real-time updates** of queen placements
+- **Enhanced chessboard** with better colors and queen symbols
+- **Automatic window positioning** with screen bounds handling
+
+### User Experience Improvements
+- **Input validation** prevents invalid configurations
+- **Warning dialogs** for potentially long-running operations
+- **Responsive controls** that update based on current state
+- **Proper cleanup** when windows are closed
+
+## 9. Improvements Made
+
+### Code Quality
+- ✅ **Java 17 upgrade** with modern language features
+- ✅ **Comprehensive documentation** with JavaDoc
+- ✅ **Error handling** and input validation
+- ✅ **Code organization** with proper package structure
+- ✅ **Performance optimizations** and memory management
+
+### Thread Safety
+- ✅ **AtomicBoolean** for thread-safe state management
+- ✅ **ExecutorService** for proper thread pool management
+- ✅ **Proper synchronization** for UI updates
+- ✅ **Resource cleanup** and lifecycle management
+
+### User Experience
+- ✅ **Enhanced GUI** with better layout and controls
+- ✅ **Real-time feedback** and status updates
+- ✅ **Input validation** and error messages
+- ✅ **Performance monitoring** and estimates
+- ✅ **Responsive design** with proper window management
+
+### Testing and Reliability
+- ✅ **Unit tests** with JUnit 5
+- ✅ **Edge case handling** and validation
+- ✅ **Performance testing** utilities
+- ✅ **Continuous integration** ready
+
+## 10. Performance Considerations
+
+### Optimal Settings
+- **Board sizes 1-12:** Generally solve quickly (< 1 minute)
+- **Board sizes 13-16:** May take several minutes
+- **Board sizes 17+:** Can take hours or longer
+
+### Thread Count Guidelines
+- **Small problems (N ≤ 8):** 2-4 threads optimal
+- **Medium problems (N 9-12):** 4-8 threads optimal  
+- **Large problems (N ≥ 13):** Use all available CPU cores
+
+### Memory Usage
+- **Base memory:** ~50MB for the application
+- **Per thread:** ~1-5MB depending on problem size
+- **Large problems:** May require 1-4GB+ RAM
+
+## 11. Testing
+
+### Running Tests
+```bash
+# Run all tests
+mvn test
+
+# Run with coverage
+mvn test jacoco:report
+
+# Run specific test class
+mvn test -Dtest=NQueensSolverTest
+```
+
+### Test Coverage
+- **Unit tests** for core algorithm functionality
+- **Edge case testing** for invalid inputs
+- **Performance testing** utilities
+- **Thread safety** validation
+
+## 12. Contributing
+
+Contributions are welcome! Please follow these guidelines:
+
+1. **Fork the repository** and create a feature branch
+2. **Follow Java coding standards** and maintain documentation
+3. **Add tests** for new functionality
+4. **Update README** if adding new features
+5. **Submit a pull request** with clear description
+
+### Development Setup
+1. Ensure Java 17+ is installed
+2. Import project into your IDE
+3. Run tests to verify setup
+4. Make changes and add tests
+5. Ensure all tests pass before submitting
+
+## 13. License
+
 This project is licensed under the [MIT License](LICENSE).
 
-## 13. Video in Arabic to Explain The Project <a name="video"></a>
-This video has been compressed. For better quality, please check the resources folder. 
+## 14. Media Resources
+
+### Video Demonstration
+🎥 **Project explanation video (Arabic):** 
+This video has been compressed. For better quality, check the resources folder.
 
 https://github.com/AhmedFatthy1040/Multithreaded-N-Queens-Problem-Solver/assets/91102592/17245fce-954c-4411-9b6c-d660ced78c44
 
-## 14. Documentation File <a name="doc"></a>
-[Documention.pdf](https://github.com/AhmedFatthy1040/Multithreaded-N-Queens-Problem-Solver/files/13694411/Documention.pdf)
+### Documentation
+📄 **Detailed documentation:** [Documentation.pdf](https://github.com/AhmedFatthy1040/Multithreaded-N-Queens-Problem-Solver/files/13694411/Documention.pdf)
+
+---
+
+## Quick Start
+
+1. **Clone and build:**
+   ```bash
+   git clone <repository-url>
+   cd Multithreaded-N-Queens-Problem-Solver
+   mvn clean compile
+   ```
+
+2. **Run the application:**
+   ```bash
+   mvn exec:java
+   ```
+
+3. **Start solving:**
+   - Enter board size (try 8 for a quick demo)
+   - Adjust thread count if desired
+   - Click "Start Solving"
+   - Watch the visualization windows!

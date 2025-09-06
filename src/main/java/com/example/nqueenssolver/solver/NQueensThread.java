@@ -3,97 +3,106 @@ package com.example.nqueenssolver.solver;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 public class NQueensThread extends Thread {
     private final int threadNumber;
     private final int n;
     private final Random random;
-    private final ChessboardPanel chessboardPanel; // Added ChessboardPanel instance
+    private final ChessboardPanel chessboardPanel;
     private final NQueensSolver solver;
-    private volatile boolean solutionFound = false;
-    private final Object lock = new Object(); // Add a lock object for synchronization
+    private final AtomicBoolean solutionFound = new AtomicBoolean(false);
+    private final Consumer<String> messageCallback;
+    private volatile boolean shouldStop = false;
 
-    public NQueensThread(int threadNumber, int n, Random random, NQueensThread.ChessboardPanel chessboardPanel) {
+    public NQueensThread(int threadNumber, int n, Consumer<String> messageCallback) {
         this.threadNumber = threadNumber;
         this.n = n;
-        this.random = new Random(); // Create a new Random instance for each thread
-        this.chessboardPanel = chessboardPanel;
+        this.random = new Random(System.currentTimeMillis() + threadNumber);
+        this.chessboardPanel = new ChessboardPanel(new int[n]);
         this.solver = new NQueensSolver(n, random);
+        this.messageCallback = messageCallback;
+        this.setName("NQueens-Thread-" + threadNumber);
     }
 
     @Override
     public void run() {
         System.out.println("Thread " + threadNumber + " started.");
 
-        // Solve N-Queens problem for this thread
-        solveWithVisualization();
-
-        System.out.println("Thread " + threadNumber + " finished.");
-
-        synchronized (lock) {
-            if (isSolutionFound()) {
-                // Display a message indicating the thread has found a solution
+        try {
+            // Solve N-Queens problem for this thread
+            solveWithVisualization();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.out.println("Thread " + threadNumber + " was interrupted.");
+        } catch (Exception e) {
+            System.err.println("Thread " + threadNumber + " encountered an error: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            System.out.println("Thread " + threadNumber + " finished.");
+            
+            if (solutionFound.get()) {
                 showMessage("Thread " + threadNumber + " found a solution!");
-
-                // Resume the thread after displaying the message
-                lock.notify();
             } else {
-                // Display a message indicating the thread has finished without finding a solution
-                showMessage("Thread " + threadNumber + " has finished its task.");
+                showMessage("Thread " + threadNumber + " finished without finding a solution.");
             }
         }
     }
 
     private void showMessage(String message) {
-        SwingUtilities.invokeLater(() -> {
-            JOptionPane.showMessageDialog(null, message, "Thread Finished", JOptionPane.INFORMATION_MESSAGE);
-        });
+        if (messageCallback != null) {
+            SwingUtilities.invokeLater(() -> messageCallback.accept(message));
+        }
     }
 
-    private void solveWithVisualization() {
-        try {
-            solveNQueensWithVisualization(0);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    private void solveWithVisualization() throws InterruptedException {
+        solveNQueensWithVisualization(0);
     }
 
     public boolean isSolutionFound() {
-        return solutionFound;
+        return solutionFound.get();
+    }
+
+    public void requestStop() {
+        shouldStop = true;
+        this.interrupt();
     }
 
     private void solveNQueensWithVisualization(int row) throws InterruptedException {
-        if (row == n) {
-            // All queens are placed successfully
-            synchronized (lock) {
-                solutionFound = true; // Set the flag to true when a solution is found
-                showMessage("Thread " + threadNumber + " found a solution!");
-                // Pause the thread here to keep the solution displayed
-                lock.wait();
-            }
+        if (shouldStop) {
             return;
         }
-    
-        int[] shuffledColumns = getShuffledColumns();
-    
-        for (int i = 0; i < n; i++) {
-            int col = shuffledColumns[i];
+
+        if (row == n) {
+            solutionFound.set(true);
+            showMessage("Thread " + threadNumber + " found a solution!");
+            return;
+        }
+
+        java.util.List<Integer> shuffledColumns = getShuffledColumns();
+
+        for (int col : shuffledColumns) {
+            if (shouldStop) {
+                return;
+            }
+
             if (isSafe(row, col)) {
-                // Place the queen in this cell
                 solver.placeQueen(row, col);
-    
-                // Publish intermediate state to update UI
+
                 updateChessboardDisplay(solver.getQueens().clone());
-                Thread.sleep(500); // Adjust sleep duration for visualization speed
-    
-                // Recur to place queens in the remaining rows
+                Thread.sleep(300);
+
                 solveNQueensWithVisualization(row + 1);
-    
-                // If placing queen in the current cell doesn't lead to a solution, backtrack
+
+                if (solutionFound.get()) {
+                    return;
+                }
+
                 solver.removeQueen(row);
             }
         }
-    }    
+    }
 
     private void updateChessboardDisplay(int[] queens) {
         SwingUtilities.invokeLater(() -> {
@@ -102,70 +111,99 @@ public class NQueensThread extends Thread {
         });
     }
 
-    private int[] getShuffledColumns() {
-        int[] columns = new int[n];
+    private java.util.List<Integer> getShuffledColumns() {
+        java.util.List<Integer> columns = new java.util.ArrayList<>();
         for (int i = 0; i < n; i++) {
-            columns[i] = i;
+            columns.add(i);
         }
-
-        for (int i = n - 1; i > 0; i--) {
-            int j = random.nextInt(i + 1);
-
-            // Swap columns[i] and columns[j]
-            int temp = columns[i];
-            columns[i] = columns[j];
-            columns[j] = temp;
-        }
-
+        java.util.Collections.shuffle(columns, random);
         return columns;
     }
 
     private boolean isSafe(int row, int col) {
-        // Check if no queens are in the same column or diagonals
+        int[] queens = solver.getQueens();
         for (int i = 0; i < row; i++) {
-            if (solver.getQueens()[i] == col || Math.abs(solver.getQueens()[i] - col) == Math.abs(i - row)) {
+            if (queens[i] == col || Math.abs(queens[i] - col) == Math.abs(i - row)) {
                 return false;
             }
         }
         return true;
     }
 
+    public ChessboardPanel getChessboardPanel() {
+        return chessboardPanel;
+    }
+
+    public int getThreadNumber() {
+        return threadNumber;
+    }
+
     public static class ChessboardPanel extends JPanel {
-        private int[] queens;
+        private volatile int[] queens;
+        private static final Color LIGHT_SQUARE = new Color(240, 217, 181);
+        private static final Color DARK_SQUARE = new Color(181, 136, 99);
+        private static final Color QUEEN_COLOR = new Color(220, 20, 20);
+        private static final Color QUEEN_BORDER = Color.BLACK;
 
         public ChessboardPanel(int[] queens) {
-            this.queens = queens;
+            this.queens = queens != null ? queens.clone() : new int[0];
+            setPreferredSize(new Dimension(400, 400));
         }
 
         public void updateQueens(int[] queens) {
-            this.queens = queens;
+            this.queens = queens != null ? queens.clone() : new int[0];
         }
 
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
+            
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            if (queens.length == 0) {
+                return;
+            }
 
             int size = queens.length;
-            int cellSize = getWidth() / size;
+            int cellSize = Math.min(getWidth(), getHeight()) / size;
 
-            // Draw chessboard
             for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
                     if ((i + j) % 2 == 0) {
-                        g.setColor(Color.LIGHT_GRAY);
+                        g2d.setColor(LIGHT_SQUARE);
                     } else {
-                        g.setColor(Color.DARK_GRAY);
+                        g2d.setColor(DARK_SQUARE);
                     }
-                    g.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+                    g2d.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
                 }
             }
 
-            // Draw queens
-            g.setColor(Color.RED);
             for (int i = 0; i < size; i++) {
                 int col = queens[i];
-                g.fillOval(col * cellSize, i * cellSize, cellSize, cellSize);
+                if (col >= 0 && col < size) {
+                    int x = col * cellSize;
+                    int y = i * cellSize;
+                    int margin = cellSize / 8;
+                    
+                    g2d.setColor(QUEEN_COLOR);
+                    g2d.fillOval(x + margin, y + margin, cellSize - 2 * margin, cellSize - 2 * margin);
+                    
+                    g2d.setColor(QUEEN_BORDER);
+                    g2d.setStroke(new BasicStroke(2.0f));
+                    g2d.drawOval(x + margin, y + margin, cellSize - 2 * margin, cellSize - 2 * margin);
+                    
+                    g2d.setColor(Color.WHITE);
+                    g2d.setFont(new Font("Arial", Font.BOLD, cellSize / 3));
+                    FontMetrics fm = g2d.getFontMetrics();
+                    String crown = "♕";
+                    int textX = x + (cellSize - fm.stringWidth(crown)) / 2;
+                    int textY = y + (cellSize + fm.getAscent()) / 2;
+                    g2d.drawString(crown, textX, textY);
+                }
             }
+
+            g2d.dispose();
         }
     }
 }
